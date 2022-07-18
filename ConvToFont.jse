@@ -2,29 +2,44 @@
 // 英字フォント変換マクロ
 // 選択範囲の英字を指定したフォントに変換
 //
-// ※注意1	「Struck capital」は大文字の "CHNPQRZ" を変換できません。
+// ※注意1	「Double Struck capital」は大文字の "CHNPQRZ" を変換できない。
+//			Wordやメモ帳に貼りつけると出るが……
 // ※注意2	メニューを出したままでいると「マクロ実行中…」のDialogが表示される。
 //			これはsakura editorのマクロ無限ループ対策によるもの。
 //			[キャンセル]押下かメニュー選択で消去が可能。
+//
+//	2022/07/19	Ver.1.0.0
 // *************************************************************************
 
 
 try {
 	// 1. 𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟
-	var boldSerifAZ = [0xd835, 0xdbbf];
-	var boldSerifaz = [0xd835, 0xdbb9];
-	var boldSerif09 = [0xd835, 0xdf9e];
+	var bSerif = {};
+	bSerif.AZ  = [0xd835, 0xdbbf];
+	bSerif.az  = [0xd835, 0xdbb9];
+	bSerif.n09 = [0xd835, 0xdf9e];
+	bSerif.SP  = null;
 	// 2. 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
-	var boldFrakturAZ = [0xd835, 0xdd2b];
-	var boldFrakturaz = [0xd835, 0xdd25];
-	var boldFraktur09 = null;	// 割り当て無し
-	// 3. 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝	※注意：大文字の CHNPQRZ は文字が未割り当てのため表示できません
-	var doubleStruckCapitalAZ = [0xd835, 0xdcf7];
-	var doubleStruckCapitalaz = [0xd835, 0xdcf1];
-	var doubleStruckCapital09 = [0xd835, 0xdfa8];
+	var bFraktur = {};
+	bFraktur.AZ  = [0xd835, 0xdd2b];
+	bFraktur.az  = [0xd835, 0xdd25];
+	bFraktur.n09 = null;	// 割り当て無し
+	bFraktur.SP  = null;
+	// 3. 𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝	※注意：大文字の CHNPQRZ はサクラエディタでは表示できません
+	var dStruckCapital = {};
+	dStruckCapital.AZ  = [0xd835, 0xdcf7];
+	dStruckCapital.az  = [0xd835, 0xdcf1];
+	dStruckCapital.n09 = [0xd835, 0xdfa8];
+	dStruckCapital.SP  = { C: 0x2102, H: 0x210D, N: 0x2115, P: 0x2119, Q: 0x211A, R: 0x211D, Z: 0x2124 };
+	// 4. 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
+	var bScript = {};
+	bScript.AZ  = [0xd835, 0xdcd0-0x41];
+	bScript.az  = [0xd835, 0xdcea-0x61];
+	bScript.n09 = null;
+	bScript.SP  = null;
 
 	// Font選択メニュー
-	var menustr = "𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟,𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗,𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝";
+	var menustr = "𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟,𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗,𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝, 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽";
 
 	// 変換対象を選択済みかチェック
 	var selectedStr = Editor.GetSelectedString(0);
@@ -33,35 +48,29 @@ try {
 		throw e;
 	}
 
-	var selectedAZ = null;
-	var selectedaz = null;
-	var selected09 = null;
-
+	var selectedType = null;
 	// カーソル付近にメニューを表示し、変換先Fontを選択
 	var item = Editor.CreateMenu( 1, menustr );	// 戻り値は1始まり。0はキャンセル
 	switch( item ){
 	case 1:	// 1. 𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟
-		selectedAZ = boldSerifAZ;
-		selectedaz = boldSerifaz;
-		selected09 = boldSerif09;
+		selectedType = bSerif;
 		break;
 	case 2:	// 2. 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
-		selectedAZ = boldFrakturAZ;
-		selectedaz = boldFrakturaz;
-		selected09 = boldFraktur09;
+		selectedType = bFraktur;
 		break;
-	case 3:	// 3. 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝
-		selectedAZ = doubleStruckCapitalAZ;
-		selectedaz = doubleStruckCapitalaz;
-		selected09 = doubleStruckCapital09;
+	case 3:	// 3. 𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝
+		selectedType = dStruckCapital;
+		break;
+	case 4:	// 4. 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
+		selectedType = bScript;
 		break;
 	default:
 		break;
 	}
 
 	// 変換実行
-	if( selectedAZ != null && selectedaz != null ){
-		var str = convToNewFont( selectedStr, selectedAZ, selectedaz, selected09 );
+	if( selectedType != null ){
+		var str = convToNewFont( selectedStr, selectedType );
 		Editor.InsText( str );
 	}
 }// --- メイン処理終了 ---
@@ -71,26 +80,34 @@ catch( e ){
 
 
 
-
 // 変換関数
-function convToNewFont( str, diffAZ, diffaz, diff09 ){
+function convToNewFont( str, diff ){
+	// 特殊変換文字
+	var conv0 = str;
+	if( diff.SP != null )
+		conv0 = str.replace( /[A-Za-z]/g, function(c){
+			if( diff.SP[c] != null )	// nullまたはundefinedの判定
+				return String.fromCharCode(diff.SP[c]);	// サロゲートペアではない
+			else
+				return c;
+		});
 	// 大文字変換
-	var conv1 = diffAZ;
-	if( diffAZ != null )
-		conv1 = str.replace( /[A-Z]/g, function(c){
-			return String.fromCharCode(diffAZ[0], c.charCodeAt(0) + diffAZ[1]);
+	var conv1 = conv0;
+	if( diff.AZ != null )
+		conv1 = conv0.replace( /[A-Z]/g, function(c){
+			return String.fromCharCode(diff.AZ[0], c.charCodeAt(0) + diff.AZ[1]);
 		});
 	// 小文字変換
 	var conv2 = conv1;
-	if( diffaz != null )
+	if( diff.az != null )
 		conv2 = conv1.replace( /[a-z]/g, function(c){
-			return String.fromCharCode(diffaz[0], c.charCodeAt(0) + diffaz[1]);
+			return String.fromCharCode(diff.az[0], c.charCodeAt(0) + diff.az[1]);
 		});
 	// 数字変換
 	var conv3 = conv2;
-	if( diff09 != null )
+	if( diff.n09 != null )
 		conv3 = conv2.replace( /[0-9]/g, function(c){
-			return String.fromCharCode(diff09[0], c.charCodeAt(0) + diff09[1]);
+			return String.fromCharCode(diff.n09[0], c.charCodeAt(0) + diff.n09[1]);
 		});
 	return conv3;
 }
