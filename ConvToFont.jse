@@ -86,7 +86,7 @@ function convToNewFont( str, diff ){
 	var conv0 = str;
 	if( diff.SP != null )
 		conv0 = str.replace( /[A-Za-z]/g, function(c){
-			if( diff.SP[c] != null )	// nullまたはundefinedの判定
+			if( c in diff.SP )	// 変数c内の文字が、連想配列のkeyとして存在するか
 				return String.fromCharCode(diff.SP[c]);	// サロゲートペアではない
 			else
 				return c;
