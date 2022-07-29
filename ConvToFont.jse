@@ -9,6 +9,7 @@
 //			[キャンセル]押下かメニュー選択で消去が可能。
 //
 //	2022/07/19	Ver.1.0.0
+//	2022/07/29	Ver.1.0.1	Bold sans-serif追加
 // *************************************************************************
 
 
@@ -19,27 +20,36 @@ try {
 	bSerif.az  = [0xd835, 0xdbb9];
 	bSerif.n09 = [0xd835, 0xdf9e];
 	bSerif.SP  = null;
-	// 2. 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
+	// 2. 𝗕𝗼𝗹𝗱 𝗦𝗮𝗻𝘀-𝘀𝗲𝗿𝗶𝗳
+	var bSansserif = {};
+	bSansserif.AZ  = [0xd835, 0xddd4-0x41];
+	bSansserif.az  = [0xd835, 0xddee-0x61];
+	bSansserif.n09 = [0xd835, 0xdfec-0x30];
+	bSansserif.SP  = null;
+	// 3. 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
 	var bFraktur = {};
 	bFraktur.AZ  = [0xd835, 0xdd2b];
 	bFraktur.az  = [0xd835, 0xdd25];
 	bFraktur.n09 = null;	// 割り当て無し
 	bFraktur.SP  = null;
-	// 3. 𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝	※注意：大文字の CHNPQRZ はサクラエディタでは表示できません
+	// 4. 𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝	※注意：大文字の CHNPQRZ はサクラエディタでは表示できません
 	var dStruckCapital = {};
 	dStruckCapital.AZ  = [0xd835, 0xdcf7];
 	dStruckCapital.az  = [0xd835, 0xdcf1];
 	dStruckCapital.n09 = [0xd835, 0xdfa8];
 	dStruckCapital.SP  = { C: 0x2102, H: 0x210D, N: 0x2115, P: 0x2119, Q: 0x211A, R: 0x211D, Z: 0x2124 };
-	// 4. 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
+	// 5. 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
 	var bScript = {};
 	bScript.AZ  = [0xd835, 0xdcd0-0x41];
 	bScript.az  = [0xd835, 0xdcea-0x61];
 	bScript.n09 = null;
 	bScript.SP  = null;
 
+	var dummy = null;
+	var fontarr = new Array(dummy, bSerif, bSansserif, bFraktur, dStruckCapital, bScript);
+
 	// Font選択メニュー
-	var menustr = "𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟,𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗,𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝, 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽";
+	var menustr = "𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟,𝗕𝗼𝗹𝗱 𝗦𝗮𝗻𝘀-𝘀𝗲𝗿𝗶𝗳,𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗,𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝, 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽";
 
 	// 変換対象を選択済みかチェック
 	var selectedStr = Editor.GetSelectedString(0);
@@ -50,23 +60,9 @@ try {
 
 	var selectedType = null;
 	// カーソル付近にメニューを表示し、変換先Fontを選択
-	var item = Editor.CreateMenu( 1, menustr );	// 戻り値は1始まり。0はキャンセル
-	switch( item ){
-	case 1:	// 1. 𝐁𝐨𝐥𝐝 𝐒𝐞𝐫𝐢𝐟
-		selectedType = bSerif;
-		break;
-	case 2:	// 2. 𝕭𝖔𝖑𝖉 𝕱𝖗𝖆𝖐𝖙𝖚𝖗
-		selectedType = bFraktur;
-		break;
-	case 3:	// 3. 𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜 𝕔𝕒𝕡𝕚𝕥𝕒𝕝
-		selectedType = dStruckCapital;
-		break;
-	case 4:	// 4. 𝓑𝓸𝓵𝓭 𝓢𝓬𝓻𝓲𝓹𝓽
-		selectedType = bScript;
-		break;
-	default:
-		break;
-	}
+	var disppos = 1;									// Menuの表示位置。0:mouse位置に表示, 1:cursor位置に表示
+	var item = Editor.CreateMenu( disppos, menustr );	// 戻り値は1始まり。0はキャンセル
+	selectedType = fontarr[item];						// Javascriptは領域外アクセスすると undefinedが返される。catchできない。
 
 	// 変換実行
 	if( selectedType != null ){
