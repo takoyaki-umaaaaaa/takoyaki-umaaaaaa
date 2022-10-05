@@ -9,149 +9,154 @@
 	<title>コピペ補助</title>
 	<style>
 
-		* {
-			box-sizing: border-box;
-			padding: 0;
-			margin: 0;
-		}
-		body {
-			width: 1000px;
-			height: 100vh;
-			padding: 10px;
-		}
+	* {
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+	}
+	body {
+		width: 100vw;;
+		height: 100vh;
+		padding: 10px;
+	}
 
 /* 順序入れ替え動作用 flexbox定義 */
-		.row {
-			display: flex;
-			width: 1000px;
-			height: calc(100vh - 20px);
-			flex-direction: column;
-			flex-wrap: wrap;
-			justify-content: flex-start;
-			
-			border: 1px solid red;
-		}
-		.row .item {
-			display: flex;
-			max-width: 400px;
-			height: 150px;
-			flex-direction: row;
-			flex-wrap: nowrap;
-			justify-content: flex-end;
-			transition-property: height;
-			transition-duration: 1s;
-			transition-timing-function: ease;
-			
-			margin: 20px;
+	.row {
+		display: flex;
+		width: calc(100vw - 20px);;
+		height: calc(100vh - 20px);
+		flex-direction: column;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		
+		border: 1px solid red;
+	}
+	.row .item {
+		display: flex;
+		max-width: 400px;
+		height: 150px;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: flex-end;
+		border-radius: 10px;
 
-			border: 1px solid blue;
-		}
-		.item {
-			padding-left: 25px;
-			-ms-transform : left, top;
-			-ms-transition : transform 1s ;
-			overflow: auto;
-		}
+		transition-property: height;
+		transition-duration: 1s;
+		transition-timing-function: ease;
+		
+		margin: 10px 20px;
+		overflow: auto;
+
+		border: 1px solid blue;
+	}
 
 
-.handle {
-	display: inline-block;
-	width: 10%;
+	.handle {
+		display: inline-block;
+		width: 10%;
+		border-radius: 10px;
 
-	border: 1px solid pink;
-}
+		border: 1px solid pink;
+	}
 
-.textbox {
-	display: inline-block;
-	width: 60%;
-	height: calc(100% - 10px);
-	margin: 5px;
-	padding 5px;
-	resize: none;
-}
+	.textbox {
+		display: inline-block;
+		width: 60%;
+		height: calc(100% - 10px);
+		margin: 5px;
+		padding 5px;
+		resize: none;
+		border: 1px solid black;
+		overflow: auto;
 
-/* Button定義 */
-.btnCopy {
-	display: inline-block;
-	width: 30%;
-	text-align: center;
-	position: relative;
-	text-decoration: none;
-	color: #fff;
-	background-color: #104547;
-	font-family: "Chiller", Fantasy;
-	font-size: 25px;
-	padding: 20px 0px;
-	border-radius: 6px;
-	overflow: hidden;
-	transition: all 0.2s linear 0s;
-	margin: 5px;
+		font-size: 18px;
+		font-family: "Yu Mincho", serif;
+		line-height: 1.2em;
 
-	border: 1px solid red;
+	}
 
-}
-.btnCopy:before {
-	content: "☞";
-	font-size: 50px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	left: 0;	top: 0;
-	right: 0;	bottom: 0;
-	transform: translatex(-100%);
-	background-color: rgba(255, 255, 255, 0.3);
-	//  border-radius: 0px 6px 6px 0px;
-	text-align: center;
-}
-.btnCopy:hover {
-}
-.btnCopy:hover:before {
-	animation:
-		buketaniopt 0.25s ease-in   0s 1,
-		buketani8  0.25s ease-out 0.25s 2 alternate,
-		buketani7  0.15s ease-out 0.75s 2 alternate,
-		buketani6  0.15s ease-out 1.05s 2 alternate,
-		buketani5  0.15s ease-out 1.35s 2 alternate,
-		buketani4  0.15s ease-out 1.65s 2 alternate,
-		buketani3  0.15s ease-out 1.95s 2 alternate,
-		buketani2 0.15s ease-out 2.25s 2 alternate,
-		buketani1 0.15s ease-out 2.55s 2 alternate;
-}
-@keyframes buketaniopt {0%{transform:translateX(-100%);}	100%{transform: translateX(0%);}}
-@keyframes buketani8   {0%{transform:translateX(0%);}	100%{transform: translateX(-30%);}}
-@keyframes buketani7   {0%{transform:translateX(0%);}	100%{transform: translateX( -10%);}}
-@keyframes buketani6   {0%{transform:translateX(0%);}	100%{transform: translateX( -4%);}}
-@keyframes buketani5   {0%{transform:translateX(0%);}	100%{transform: translateX( 0%);}}
-@keyframes buketani4   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
-@keyframes buketani3   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
-@keyframes buketani2   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
-@keyframes buketani1   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
+	/* Button定義 */
+	.btnCopy {
+		display: inline-block;
+		width: 30%;
+		text-align: center;
+		position: relative;
+		text-decoration: none;
+		color: #fff;
+		background-color: #104547;
+		font-family: "Chiller", Fantasy;
+		font-size: 35px;
+		padding: 0;
+		border-radius: 6px;
+		overflow: hidden;
+		transition: all 0.2s linear 0s;
+		margin: 5px;
+
+		border: 1px solid red;
+
+	}
+	.btnCopy:before {
+		content: "☞";
+		font-size: 50px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		left: 0;	top: 0;
+		right: 0;	bottom: 0;
+		transform: translatex(-100%);
+		background-color: rgba(255, 255, 255, 0.3);
+		//  border-radius: 0px 6px 6px 0px;
+		text-align: center;
+	}
+	.btnCopy:hover {
+	}
+	.btnCopy:hover:before {
+		animation:
+			buketaniopt 0.25s ease-in   0s 1,
+			buketani8  0.25s ease-out 0.25s 2 alternate,
+			buketani7  0.15s ease-out 0.75s 2 alternate,
+			buketani6  0.15s ease-out 1.05s 2 alternate,
+			buketani5  0.15s ease-out 1.35s 2 alternate,
+			buketani4  0.15s ease-out 1.65s 2 alternate,
+			buketani3  0.15s ease-out 1.95s 2 alternate,
+			buketani2 0.15s ease-out 2.25s 2 alternate,
+			buketani1 0.15s ease-out 2.55s 2 alternate;
+	}
+	@keyframes buketaniopt {0%{transform:translateX(-100%);}	100%{transform: translateX(0%);}}
+	@keyframes buketani8   {0%{transform:translateX(0%);}	100%{transform: translateX(-30%);}}
+	@keyframes buketani7   {0%{transform:translateX(0%);}	100%{transform: translateX( -10%);}}
+	@keyframes buketani6   {0%{transform:translateX(0%);}	100%{transform: translateX( -4%);}}
+	@keyframes buketani5   {0%{transform:translateX(0%);}	100%{transform: translateX( 0%);}}
+	@keyframes buketani4   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
+	@keyframes buketani3   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
+	@keyframes buketani2   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
+	@keyframes buketani1   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
 
 
 	</style>
 </head>
 <body>
 	<div class="row">
-		<div id="1" class="item" draggable="true">
+		<div id="1" class="item">
 			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy" draggable="true">Click here to copy the Text.</button>
-			<textarea class="textbox" draggable="false"></textarea>
+			<button class="btnCopy">Push<br>to<br>Copy</button>
+			<div class="textbox" contenteditable="true"></div>
 		</div>
-		<div id="2" class="item" draggable="true">
+		<div id="2" class="item">
 			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy" draggable="true">Click here to copy the Text.</button>
-			<textarea class="textbox" draggable="false"></textarea>
+			<button class="btnCopy">Push<br>to<br>Copy</button>
+			<div class="textbox" contenteditable="true"></div>
 		</div>
-		<div id="3" class="item" draggable="true">
+		<div id="3" class="item">
 			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy" draggable="true">Click here to copy the Text.</button>
-			<textarea class="textbox" draggable="false"></textarea>
+			<button class="btnCopy">Push<br>to<br>Copy</button>
+			<div class="textbox" contenteditable="true"></div>
 		</div>
-		<div id="4" class="item" draggable="true">
+		<div id="4" class="item">
 			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy" draggable="true">Click here to copy the Text.</button>
-			<textarea class="textbox" draggable="false"></textarea>
+			<button class="btnCopy">Push<br>to<br>Copy</button>
+			<div class="textbox" contenteditable="true"></div>
 		</div>
 	</div>
 
@@ -165,7 +170,7 @@ let cnt = 0;
 findAll(".item").forEach(function (node) {
 	node.style.order = ++cnt;
 	
-//	node.querySelector('input').value = cnt;
+//	node.querySelector('.textbox').value = cnt;
 });
 
 
@@ -182,9 +187,9 @@ function onDragStart(event) {
 	event.dataTransfer.effectAllowed = 'all';
 	event.dataTransfer.setData('Text', this.id);
 	
-	draggingEle = event.target;
+	draggingEle = event.target.parentElement;
 	draggingEleHeight = draggingEle.style.height;
-	draggingEle.style.height = "10px";
+	draggingEle.style.height = "20px";
 	console.log("onDragStart");
 	return false;
 }
@@ -195,11 +200,13 @@ function onDragEnter(event) {
 
 	let dragEle = draggingEle;
 	let dropEle = event.currentTarget;
+	
+	dropEle.style.border = "5px solid blue";
 
 	let sourceOrder = parseInt(dragEle.style.order);
 	let targetOrder = parseInt(dropEle.style.order);
 	let shiftArray = (targetOrder < sourceOrder)? 1: -1;	// ずらす方向の決定
-	findAll('*[draggable=true]').forEach(function (node) {
+	findAll('.item').forEach(function (node) {
 		// 順序入れ替えの影響範囲に絞る。影響範囲はDrag対象番号～Drop対象番号内。
 		if(Math.min(targetOrder,sourceOrder) <= node.style.order && node.style.order <= Math.max(targetOrder,sourceOrder)) {
 			if( node != dragEle )
@@ -226,8 +233,10 @@ function onDragLeave(event) {
 }
 
 function onDragEnd(event) {
-	event.target.style.height = draggingEleHeight;
-	draggingEle = null;
+	if( draggingEle ){
+		draggingEle.style.height = draggingEleHeight;
+		draggingEle = null;
+	}
 
 	return false;
 }
@@ -240,11 +249,12 @@ function onDrop(event) {
 //	let dragEle = document.getElementById(dragId);
 	let dragEle = draggingEle;
 	let dropEle = event.currentTarget;
+	dropEle.style.border = "5px solid red";
 
 	let sourceOrder = parseInt(dragEle.style.order);
 	let targetOrder = parseInt(dropEle.style.order);
 	let shiftArray = (targetOrder < sourceOrder)? 1: -1;	// ずらす方向の決定
-	findAll('*[draggable=true]').forEach(function (node) {
+	findAll('.item').forEach(function (node) {
 		// 順序入れ替えの影響範囲に絞る。影響範囲はDrag対象番号～Drop対象番号内。
 		if(Math.min(targetOrder,sourceOrder) <= node.style.order && node.style.order <= Math.max(targetOrder,sourceOrder)) {
 			if( node != dragEle )
@@ -255,7 +265,7 @@ function onDrop(event) {
 //	dragEle.style.height = draggingEleHeight;	// onDragEndで対応
 
 	// debug code
-//	findAll('*[draggable=true]').forEach(function (node) {
+//	findAll('.item').forEach(function (node) {
 //		node.querySelector('input').value = node.style.order;
 //	});
 	return false;
@@ -266,13 +276,14 @@ function onNoDragStart(event) { if (event.preventDefault) event.preventDefault()
 window.onload = function () {
 	findAll('*[draggable=true]').forEach(function(node) {
 		node.addEventListener('dragstart',	onDragStart);		// Dragし初めに来る
+		node.addEventListener('dragend',	onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
+	});
+	findAll('.item').forEach(function(node) {
 		node.addEventListener('dragenter',	onDragEnter);		// Drop target 上に入った時に来る
 		node.addEventListener('dragover',	onDragOver);		// Drop target 上に居る間来る
 		node.addEventListener('dragleave',	onDragLeave);		// Drop target から離れたら来る
-		node.addEventListener('dragend',	onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
 		node.addEventListener('drop',		onDrop);			// Drop target に dropしたら来る
-		
-
+		node.addEventListener('dragend',	onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
 	});
 };
 
