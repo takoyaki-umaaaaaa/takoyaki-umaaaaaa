@@ -7,8 +7,8 @@
 	<meta http-equiv="Content-Style-Type" content="text/css" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>コピペ補助</title>
-	<style>
 
+<style>
 	* {
 		box-sizing: border-box;
 		padding: 0;
@@ -17,14 +17,27 @@
 	body {
 		width: 100vw;;
 		height: 100vh;
-		padding: 10px;
+/*		background: -ms-linear-gradient(-20deg, #ff2846 0%, #6944ff 100%);	*/
+	}
+
+	.menubar {
+		width: calc(100vw);
+		height: 80px;
+
+		border: 1px solid lime;
+	}
+	.addItem,
+	.delItem {
+		display: inline-block;
+		width: 50px;
+		height:50px;
 	}
 
 /* 順序入れ替え動作用 flexbox定義 */
 	.row {
 		display: flex;
-		width: calc(100vw - 20px);;
-		height: calc(100vh - 20px);
+		width: calc(100vw);
+		height: calc(100vh - 80px);
 		flex-direction: column;
 		flex-wrap: wrap;
 		justify-content: flex-start;
@@ -38,23 +51,37 @@
 		flex-direction: row;
 		flex-wrap: nowrap;
 		justify-content: flex-end;
-		border-radius: 10px;
+		border-radius: 20px;
+		box-shadow: 0px 8px 60px -10px rgba(13, 28, 39, 0.6);
 
 		transition-property: height;
 		transition-duration: 1s;
 		transition-timing-function: ease;
 		
 		margin: 10px 20px;
+		padding: 8px;
 		overflow: auto;
 
-		border: 1px solid blue;
+	}
+	.bgColor1 {
+		background: -ms-radial-gradient(closest-corner, rgba(16, 47, 70, 0) 60%, rgba(16, 47, 70, 0.2)), -ms-linear-gradient(108deg, #e5e9bf 45%, #00396f 90%);
+	}
+	.bgColor2 {
+		background: -ms-radial-gradient(closest-corner, rgba(16, 47, 70, 0) 60%, rgba(16, 47, 70, 0.2)), -ms-linear-gradient(108deg, #e0da81, #e0a681 45%, #0f1b58 90%);
+	}
+	.bgColor3 {
+		background: radial-gradient(circle farthest-side at right bottom, #f8cdda, #1d2b64 95%, #0e153a);
+	}
+	.bgColor4 {
+		background: -ms-radial-gradient(closest-corner, rgba(16, 47, 70, 0) 60%, rgba(16, 47, 70, 0.26)), -ms-linear-gradient(108deg, #26d0ce, #1a2980 90%);
 	}
 
 
 	.handle {
 		display: inline-block;
 		width: 10%;
-		border-radius: 10px;
+		border-radius: 20px;
+		cursor: move;
 
 		border: 1px solid pink;
 	}
@@ -67,7 +94,9 @@
 		padding 5px;
 		resize: none;
 		border: 1px solid black;
+		border-radius: 6px;
 		overflow: auto;
+		background-color: rgba(255,255,255,0.7);
 
 		font-size: 18px;
 		font-family: "Yu Mincho", serif;
@@ -132,47 +161,29 @@
 	@keyframes buketani3   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
 	@keyframes buketani2   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
 	@keyframes buketani1   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
-
-
-	</style>
+</style>
 </head>
+
 <body>
-	<div class="row">
-		<div id="1" class="item">
-			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy">Push<br>to<br>Copy</button>
-			<div class="textbox" contenteditable="true"></div>
-		</div>
-		<div id="2" class="item">
-			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy">Push<br>to<br>Copy</button>
-			<div class="textbox" contenteditable="true"></div>
-		</div>
-		<div id="3" class="item">
-			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy">Push<br>to<br>Copy</button>
-			<div class="textbox" contenteditable="true"></div>
-		</div>
-		<div id="4" class="item">
-			<span class="handle" draggable="true">ハンドル</span>
-			<button class="btnCopy">Push<br>to<br>Copy</button>
-			<div class="textbox" contenteditable="true"></div>
-		</div>
+	<div class="menubar">
+		<button class="addItem" onclick="addItem()">➕</button>
+		<button class="delItem" onclick="deleteLastItem()">➖</button>
+	</div>
+	<div id="itemBody" class="row">
 	</div>
 
 <script>
+'use strict';
+
+const STARTUP_ITEMS = 4;	/* 起動時のITEM数 */
+
+
+
+
 
 // 🅳🆁🅰🅶 🅰🅽🅳 🅳🆁🅾🅿
 // HTML5 の機能を使っているが、要素の入れ替えはflexboxのorder property頼り。
 // Dropイベントで order番号を振り直している。
-
-let cnt = 0;
-findAll(".item").forEach(function (node) {
-	node.style.order = ++cnt;
-	
-//	node.querySelector('.textbox').value = cnt;
-});
-
 
 let draggingEle = null;	/* Drag中の要素を保持。Drag中以外はnull */
 let draggingEleHeight = 0;
@@ -185,7 +196,7 @@ function findAll(selector) {
 
 function onDragStart(event) {
 	event.dataTransfer.effectAllowed = 'all';
-	event.dataTransfer.setData('Text', this.id);
+//	event.dataTransfer.setData('Text', this.id);
 	
 	draggingEle = event.target.parentElement;
 	draggingEleHeight = draggingEle.style.height;
@@ -200,8 +211,6 @@ function onDragEnter(event) {
 
 	let dragEle = draggingEle;
 	let dropEle = event.currentTarget;
-	
-	dropEle.style.border = "5px solid blue";
 
 	let sourceOrder = parseInt(dragEle.style.order);
 	let targetOrder = parseInt(dropEle.style.order);
@@ -245,11 +254,8 @@ function onDrop(event) {
 	if (event.preventDefault) event.preventDefault();
 	this.classList.remove('over');
 
-//	const dragId = event.dataTransfer.getData('Text');
-//	let dragEle = document.getElementById(dragId);
 	let dragEle = draggingEle;
 	let dropEle = event.currentTarget;
-	dropEle.style.border = "5px solid red";
 
 	let sourceOrder = parseInt(dragEle.style.order);
 	let targetOrder = parseInt(dropEle.style.order);
@@ -271,27 +277,55 @@ function onDrop(event) {
 	return false;
 }
 
-function onNoDragStart(event) { if (event.preventDefault) event.preventDefault(); console.log("onNoDragStart");return false; }
 
-window.onload = function () {
-	findAll('*[draggable=true]').forEach(function(node) {
-		node.addEventListener('dragstart',	onDragStart);		// Dragし初めに来る
-		node.addEventListener('dragend',	onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
-	});
-	findAll('.item').forEach(function(node) {
-		node.addEventListener('dragenter',	onDragEnter);		// Drop target 上に入った時に来る
-		node.addEventListener('dragover',	onDragOver);		// Drop target 上に居る間来る
-		node.addEventListener('dragleave',	onDragLeave);		// Drop target から離れたら来る
-		node.addEventListener('drop',		onDrop);			// Drop target に dropしたら来る
-		node.addEventListener('dragend',	onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
-	});
-};
+/* コピペ用ワンセットとして、次の形式のHTML要素を作成・追加
+	<div class="item">
+		<span class="handle" draggable="true">ハンドル</span>
+		<button class="btnCopy">Push<br>to<br>Copy</button>
+		<div class="textbox" contenteditable="true"></div>
+	</div>
+*/
+let countOrder = 0;
+function addItem() {
+	const eleItem = document.getElementById('itemBody').appendChild( document.createElement('div') );
+	eleItem.classList.add("item");
+	eleItem.classList.add("bgColor" + (countOrder % 4 + 1));
+	eleItem.style.order = ++countOrder;
+
+	const eleHandle = eleItem.appendChild( document.createElement('span') );
+	eleHandle.classList.add("handle");
+	eleHandle.setAttribute('draggable', 'true');
+	eleHandle.textContent = "ハンドル";
+	const eleBtn = eleItem.appendChild( document.createElement('button') );
+	eleBtn.classList.add("btnCopy");
+	eleBtn.textContent = "Push to Copy";
+	const eleTxt = eleItem.appendChild( document.createElement('div') );
+	eleTxt.classList.add("textbox");
+	eleTxt.setAttribute('contenteditable', 'true');
+
+	eleHandle.addEventListener('dragstart',	onDragStart);		// Dragし初めに来る
+	eleHandle.addEventListener('dragend',	onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
+
+	eleItem.addEventListener('dragenter',	onDragEnter);		// Drop target 上に入った時に来る
+	eleItem.addEventListener('dragover',	onDragOver);		// Drop target 上に居る間来る
+	eleItem.addEventListener('dragleave',	onDragLeave);		// Drop target から離れたら来る
+	eleItem.addEventListener('drop',		onDrop);			// Drop target に dropしたら来る
+	eleItem.addEventListener('dragend',		onDragEnd);			// Dragを止めた(右クリックを離したり)ら来る
+
+}
+
+/* 最後尾の1件を削除 */
+function deleteLastItem() {
+	let nodes = document.getElementById('itemBody').childNodes;
+	if( 0 < nodes.length ) {
+		let targetEle = nodes[nodes.length - 1];
+		targetEle.parentNode.removeChild( targetEle );
+	}
+}
 
 
-
-
-
-
+for( let cnt = 0; cnt < STARTUP_ITEMS; cnt++ )
+	addItem();
 
 
 
