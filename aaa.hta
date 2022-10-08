@@ -15,9 +15,9 @@
 		margin: 0;
 	}
 	body {
-		width: 100vw;;
+		width: 100vw;
 		height: 100vh;
-/*		background: -ms-linear-gradient(-20deg, #ff2846 0%, #6944ff 100%);	*/
+		background: url(./annie-spratt-xz485Eku8O4-unsplash.jpg);
 	}
 
 	.menubar {
@@ -36,6 +36,7 @@
 /* 順序入れ替え動作用 flexbox定義 */
 	.row {
 		display: flex;
+		overflow: auto;
 		width: calc(100vw);
 		height: calc(100vh - 80px);
 		flex-direction: column;
@@ -50,7 +51,8 @@
 		height: 150px;
 		flex-direction: row;
 		flex-wrap: nowrap;
-		justify-content: flex-end;
+		justify-content: flex-start;
+		align-items: center;
 		border-radius: 20px;
 		box-shadow: 0px 8px 60px -10px rgba(13, 28, 39, 0.6);
 
@@ -80,10 +82,16 @@
 	.handle {
 		display: inline-block;
 		width: 10%;
+		height: calc(100% - 10px);
 		border-radius: 20px;
+		margin: 5px;
 		cursor: move;
+		background: linear-gradient(90deg, rgba(127,127,127,0.6) 3px, transparent 1px), 
+					linear-gradient(rgba(127,127,127,0.6) 3px, transparent 1px),
+					rgba(255,255,255,0.6);
+		background-size: 5px 5px;
 
-		border: 1px solid pink;
+		border: 1px solid black;
 	}
 
 	.textbox {
@@ -93,10 +101,11 @@
 		margin: 5px;
 		padding 5px;
 		resize: none;
-		border: 1px solid black;
+/*		border: 1px solid black;	*/
 		border-radius: 6px;
 		overflow: auto;
 		background-color: rgba(255,255,255,0.7);
+		box-shadow: 4px 4px 45px -7px rgba(13, 28, 39, 0.5) inset;
 
 		font-size: 18px;
 		font-family: "Yu Mincho", serif;
@@ -105,6 +114,83 @@
 	}
 
 	/* Button定義 */
+	.pushable {
+		position: relative;
+		width: 30%;
+		height: 80%;
+		border: none;
+		background: transparent;
+		padding: 20px;
+		margin: 5px;
+		cursor: pointer;
+		outline-offset: 4px;
+		transition: filter 250ms;
+/*		border: 1px solid red;	*/
+	}
+	.shadow {
+		position: absolute;
+		top: 8px;
+		left: 0;
+		width: 100%;
+		height: calc(100% - 16px);
+		border-radius: 12px;
+		background: rgba(0,0,0,0.25);
+		will-change: transform;
+		transform: translateY(2px);
+		transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+	}
+	.edge {
+		position: absolute;
+		top: 8px;
+		left: 0;
+		width: 100%;
+		height: calc(100% - 16px);
+		border-radius: 12px;
+		background-color: #0D393B;
+	}
+	.front {
+		display: inline-block;
+		position: absolute;
+		top: 8px;
+		left: 0;
+		width: 100%;
+		height: calc(100% - 16px);
+		padding-top: 10px;
+		border-radius: 12px;
+		font-size: 1.25rem;
+		color: white;
+		font-family: "Chiller", Fantasy;
+		background-color: #104547;
+		will-change: transform;
+		transform: translateY(-4px);
+		transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+		-ms-user-select: none;
+	}
+	.pushable:hover {
+		filter: brightness(110%);
+	}
+	.pushable:hover .front {
+		transform: translateY(-6px);
+		transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+	}
+	.pushable:active .front {
+		transform: translateY(-2px);
+		transition: transform 34ms;
+	}
+	.pushable:hover .shadow {
+		transform: translateY(4px);
+		transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+	}
+	.pushable:active .shadow {
+		transform: translateY(1px);
+		transition: transform 34ms;
+	}
+	.pushable:focus:not(:focus-visible) {
+		outline: none;
+	}
+
+
+/*
 	.btnCopy {
 		display: inline-block;
 		width: 30%;
@@ -161,6 +247,7 @@
 	@keyframes buketani3   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
 	@keyframes buketani2   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
 	@keyframes buketani1   {0%{transform:translateX(0%);}	100%{transform: translateX(  0%);}}
+*/
 </style>
 </head>
 
@@ -278,27 +365,47 @@ function onDrop(event) {
 }
 
 
-/* コピペ用ワンセットとして、次の形式のHTML要素を作成・追加
+/*	コピペ用ワンセットとして、次の形式のHTML要素を作成・追加
+	(表示順(order)は先頭に、DOM tree上は最後尾に追加)
 	<div class="item">
 		<span class="handle" draggable="true">ハンドル</span>
-		<button class="btnCopy">Push<br>to<br>Copy</button>
+		<button class="pushable">
+			<span class="shadow"></span>
+			<span class="edge"></span>
+			<span class="front">Push to Copy</span>
+		</button>
 		<div class="textbox" contenteditable="true"></div>
 	</div>
 */
 let countOrder = 0;
 function addItem() {
-	const eleItem = document.getElementById('itemBody').appendChild( document.createElement('div') );
+
+	// 追加要素を先頭にするため、現存する全itemのorderを1加算
+	findAll('.item').forEach(function (node) {
+		node.style.order++;
+	});
+
+	// itemの作成・追加
+	const eleItem = document.getElementById('itemBody').insertBefore( document.createElement('div') );
 	eleItem.classList.add("item");
-	eleItem.classList.add("bgColor" + (countOrder % 4 + 1));
-	eleItem.style.order = ++countOrder;
+	eleItem.classList.add("bgColor" + (countOrder++ % 4 + 1));
+	eleItem.style.order = 0;	// 追加要素は先頭表示
 
 	const eleHandle = eleItem.appendChild( document.createElement('span') );
 	eleHandle.classList.add("handle");
 	eleHandle.setAttribute('draggable', 'true');
-	eleHandle.textContent = "ハンドル";
+	eleHandle.textContent = "";
+	// button作成
 	const eleBtn = eleItem.appendChild( document.createElement('button') );
-	eleBtn.classList.add("btnCopy");
-	eleBtn.textContent = "Push to Copy";
+	eleBtn.classList.add("pushable");
+		const eleBtnShadow = eleBtn.appendChild( document.createElement('span') );
+		eleBtnShadow.classList.add("shadow");
+		const eleBtnEdge = eleBtn.appendChild( document.createElement('span') );
+		eleBtnEdge.classList.add("edge");
+		const eleBtnFront = eleBtn.appendChild( document.createElement('span') );
+		eleBtnFront.classList.add("front");
+		eleBtnFront.textContent = "Push to Copy";
+	// Textbox作成
 	const eleTxt = eleItem.appendChild( document.createElement('div') );
 	eleTxt.classList.add("textbox");
 	eleTxt.setAttribute('contenteditable', 'true');
@@ -314,12 +421,13 @@ function addItem() {
 
 }
 
-/* 最後尾の1件を削除 */
+/* DOM Tree上の最後尾の1件を削除 */
 function deleteLastItem() {
 	let nodes = document.getElementById('itemBody').childNodes;
 	if( 0 < nodes.length ) {
 		let targetEle = nodes[nodes.length - 1];
 		targetEle.parentNode.removeChild( targetEle );
+		countOrder--;
 	}
 }
 
